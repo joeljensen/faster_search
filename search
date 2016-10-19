@@ -1,0 +1,14 @@
+#! /usr/bin/env bash 
+[ $# -ge 1 -a -f "$1" ] && input="$1" || input="-"
+ARGS=$input
+if [ -z "$ARGS" ]
+then
+  echo "usage: search <terms>"
+  echo "  Will use mdfind to search for text in the src directory, then open the files to the particular line in your editor."
+  echo "  The search term is copied to your clipboard."
+  echo "  There may be more than one line match per file."
+  exit
+fi
+
+echo -n $@ | pbcopy
+mdfind -onlyin . "$@" -0  | xargs -0 grep -noH  "$@"  |cut -f1,2 -d: | xargs $EDITOR - ;
